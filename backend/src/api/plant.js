@@ -73,7 +73,7 @@ router.post("/identify", upload.single("image"), async (req, res) => {
             id: plant.id,
             name: plant.name,
             probability: plant.probability,
-            similar_images: plant.similar_images.map(img => img.url) // Small image URLs only
+            similar_images: plant.similar_images.map(img => img.url)
         }));
 
         const isPlant = response.data.result.is_plant.binary;
