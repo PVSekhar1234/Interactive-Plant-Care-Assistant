@@ -200,18 +200,3 @@ Once reminders are set, users will receive notifications in their **Google Calen
    ```
 
 ---
-
-## Environment Variables Summary
-
-Make sure to create a `.env` file in the **backend** directory with the following variables:
-
-```ini
-PLANT_ID_API_KEY=your-plant-id-api-key
-WEATHER_API_KEY=your-weather-api-key
-CLIENT_ID=your-google-api-client-id
-CLIENT_SECRET=your-google-client-secret
-REDIRECT_URI=your-redirect-url
-SESSION_SECRET=your-generated-session-secret-key
-```
-
----
