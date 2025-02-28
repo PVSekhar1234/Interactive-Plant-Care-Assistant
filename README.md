@@ -11,30 +11,22 @@ Make a config folder in the root directory and inside it make a 'dev.env' file l
 CLIENT_ID=your google api client id
 CLIENT_SECRET=your google client secret
 REDIRECT_URI=your redirect url
+SESSION_SECRET= your generated session secret
 
-Installations:-
-1. npm install  path body-parser express-session googleapis dotenv
-2. npm install express-session
-3. npm install react-scripts
+To Start our application:-
 
-To run front-end:-
 1. Clone the repository
+2. ```npm init -y```
+3. ```npm install path body-parser express-session googleapis dotenv```
+4.  ```npm install react-scripts```
+5. ```npm i express ejs```
+6. To start frontend server:-
+    ```cd frontend```
+7. ```npm start```
+8. To start backend server:-
+   ```cd backend``
+9. ``npm start```
 
-2. Navigate to the frontend folder
-   cd frontend
-3. Install the required frontend dependencies
-   npm install react-scripts
-4. Start the frontend server
-   npm start
-
-To run backend :-
-1. Navigate to the backend folder
-   cd backend
-   npm init -y
-2. Install the required backend dependencies
-     npm i express ejs
-3. Start the backend server
-    npm start
 
 Output:-
 Once the reminder is set, you will receive notifications in your Google Calendar at the scheduled times.
