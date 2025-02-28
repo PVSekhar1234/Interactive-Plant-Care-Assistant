@@ -1,36 +1,217 @@
 # Interactive-Plant-Care-Assistant
-Project Description
 
-The Interactive Plant Care Assistant is a web application that helps plant owners manage their plants effectively. The system provides plant identification, health diagnosis, weather-based care suggestions, and personalized reminders. It integrates external APIs like Plant.id, Weather API, GPT API, and Google Calendar API to automate plant care routines.
+## Project Description
 
-This module contains the implementation of reminding the users to take of their plants.Here, we used Google calendar API to set reminders in user's google calendar.
+The **Interactive Plant Care Assistant** is a web application that helps plant owners manage their plants effectively. The system provides **plant identification**, **health diagnosis**, **weather-based care suggestions**, and **personalized reminders**. It integrates external APIs like **Plant.id**, **Weather API**, **GPT API**, and **Google Calendar API** to automate plant care routines.
 
-Get your own credentials from Google cloud console.
+This module contains the implementation of reminding users to take care of their plants. Here, we use the **Google Calendar API** to set reminders in the user's Google Calendar.
 
-Make a config folder in the root directory and inside it make a 'dev.env' file like as config(folder) -> dev.env(file) .The config file must contain 4 env variables as
+---
 
-CLIENT_ID=your google api client id,
-CLIENT_SECRET=your google client secret,
-REDIRECT_URI=your redirect url,
-SESSION_SECRET= your generated session secret key
+## Setup and Installation
 
-To Start our application:-
+### Prerequisites
 
-1. Clone the repository
-2. ```npm init -y```
-3. ```npm install path body-parser express-session googleapis dotenv```
-4.  ```npm install react-scripts```
-5. ```npm i express ejs```
-6. To start frontend server:-
-    ```cd frontend```
-7. ```npm start```
-8. To start backend server:-
-   ```cd backend```
-9. ```npm start```
+- **Node.js** installed (Recommended version: `>= v18`)
+- **NPM** installed (`>= v10`)
+- **Google API Credentials** (for Calendar integration)
+- **Plant.id API Key** (for plant identification)
+- **Weather API Key** (for weather-based care suggestions)
 
+### Step-by-Step Installation
 
-Output:-
-Once the reminder is set, you will receive notifications in your Google Calendar at the scheduled times.
+#### 1. Clone the repository
 
+```bash
+git clone https://github.com/PVSekhar1234/Interactive-Plant-Care-Assistant.git
+cd Interactive-Plant-Care-Assistant
+```
 
+#### 2. Initialize the project
 
+```bash
+npm init -y
+```
+
+#### 3. Install backend dependencies
+
+```bash
+npm install path body-parser express-session googleapis dotenv express ejs axios multer cors firebase-admin
+```
+
+#### 4. Install frontend dependencies
+
+```bash
+cd frontend
+npm install react-scripts
+```
+
+#### 5. Start the frontend server
+
+```bash
+npm start
+```
+
+#### 6. Start the backend server
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+---
+
+## Plant Identification using Plant.id API
+
+### 1. Obtain Plant.id API Key
+
+To use the **Plant.id API**, follow these steps:
+
+1. Go to [Plant.id API](https://plant.id/)
+2. Sign up for an account.
+3. Navigate to the **API Dashboard**.
+4. Generate an API key under the **API Credentials** section.
+5. Copy the API key for later use.
+
+### 2. Set Up Environment Variables
+
+Create a `.env` file in the **backend** directory and add the following:
+
+```ini
+PLANT_ID_API_KEY=your-plant-id-api-key
+PORT=5000
+```
+
+### 3. API Endpoint for Plant Identification
+
+#### **Upload and Identify a Plant Image**
+
+- **Endpoint:** `POST /api/plant/identify`
+- **Request:**
+  - `image`: Image file (uploaded using `multipart/form-data`)
+- **Response:** JSON object with plant name, probability, and image suggestions.
+
+#### **Terminal Command to Test API**
+
+```bash
+curl -X POST -F "image=@backend/uploads/rose.jpg" http://localhost:5000/api/plant/identify
+```
+
+#### **Example Response**
+
+```json
+{
+  "message": "Plant identified successfully",
+  "data": {
+    "suggestions": [
+      {
+        "id": "02550314fb506af1",
+        "name": "Rosa chinensis",
+        "probability": 0.42,
+        "similar_images": [
+          "https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/4/20a/4e51faf0387cc5685c1fa06bce7540ac4ddb0.jpeg"
+        ]
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Weather-Based Care Suggestions
+
+### 1. Obtain a Weather API Key
+
+To enable weather-based plant care recommendations:
+
+1. Go to [Weather API Provider](https://openweathermap.org/api).
+2. Sign up and generate an **API Key**.
+3. Copy the API key for later use.
+
+### 2. Configure `.env` File
+
+Create or update the `.env` file in the **backend** directory:
+
+```ini
+WEATHER_API_KEY=your-weather-api-key
+```
+
+### 3. Running the Weather API Demo
+
+To test the weather-based plant care system, run the following command from the **backend** directory:
+
+```bash
+node ./src/api/weather.js
+```
+
+---
+
+## Google Calendar Reminder Setup
+
+### 1. Get Google API Credentials
+
+Obtain credentials from **Google Cloud Console**:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project.
+3. Enable the **Google Calendar API**.
+4. Generate OAuth 2.0 credentials.
+5. Download the credentials JSON file.
+6. Extract **Client ID**, **Client Secret**, and **Redirect URI**.
+
+### 2. Configure `.env` File
+
+Create a `.env` file in the **backend** directory:
+
+```ini
+CLIENT_ID=your-google-api-client-id
+CLIENT_SECRET=your-google-client-secret
+REDIRECT_URI=your-redirect-url
+SESSION_SECRET=your-generated-session-secret-key
+```
+
+### 3. Set a Calendar Reminder
+
+Once reminders are set, users will receive notifications in their **Google Calendar** at scheduled times.
+
+---
+
+## Running the Application
+
+1. **Start frontend server:**
+   ```bash
+   cd frontend
+   npm start
+   ```
+2. **Start backend server:**
+   ```bash
+   cd backend
+   npm run dev
+   ```
+3. **Test Plant ID API:**
+   ```bash
+   curl -X POST -F "image=@backend/uploads/rose.jpg" http://localhost:5000/api/plant/identify
+   ```
+4. **Run Weather API Demo:**
+   ```bash
+   node ./src/api/weather.js
+   ```
+
+---
+
+## Environment Variables Summary
+
+Make sure to create a `.env` file in the **backend** directory with the following variables:
+
+```ini
+PLANT_ID_API_KEY=your-plant-id-api-key
+WEATHER_API_KEY=your-weather-api-key
+CLIENT_ID=your-google-api-client-id
+CLIENT_SECRET=your-google-client-secret
+REDIRECT_URI=your-redirect-url
+SESSION_SECRET=your-generated-session-secret-key
+```
+
+---
