@@ -7,11 +7,12 @@ This module contains the implementation of reminding the users to take of their 
 
 Get your own credentials from Google cloud console.
 
-Make a config folder in the root directory and inside it make a 'dev.env' file like as config(folder) -> dev.env(file) .The config file must contain 3 env variables as
-CLIENT_ID=your google api client id
-CLIENT_SECRET=your google client secret
-REDIRECT_URI=your redirect url
-SESSION_SECRET= your generated session secret
+Make a config folder in the root directory and inside it make a 'dev.env' file like as config(folder) -> dev.env(file) .The config file must contain 4 env variables as
+
+CLIENT_ID=your google api client id,
+CLIENT_SECRET=your google client secret,
+REDIRECT_URI=your redirect url,
+SESSION_SECRET= your generated session secret key
 
 To Start our application:-
 
@@ -24,8 +25,8 @@ To Start our application:-
     ```cd frontend```
 7. ```npm start```
 8. To start backend server:-
-   ```cd backend``
-9. ``npm start```
+   ```cd backend```
+9. ```npm start```
 
 
 Output:-
