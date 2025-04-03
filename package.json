@@ -1,0 +1,33 @@
+{
+  "name": "interactive-plant-care-assistant",
+  "version": "1.0.0",
+  "description": "The **Interactive Plant Care Assistant** is a web application that helps plant owners manage their plants effectively. The system provides **plant identification**, **health diagnosis**, **weather-based care suggestions**, and **personalized reminders**. It integrates external APIs like **Plant.id**, **Weather API**, **GPT API**, and **Google Calendar API** to automate plant care routines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PVSekhar1234/Interactive-Plant-Care-Assistant.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PVSekhar1234/Interactive-Plant-Care-Assistant/issues"
+  },
+  "homepage": "https://github.com/PVSekhar1234/Interactive-Plant-Care-Assistant#readme",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "firebase-admin": "^13.2.0",
+    "googleapis": "^148.0.0",
+    "multer": "^1.4.5-lts.2",
+    "path": "^0.12.7"
+  }
+}

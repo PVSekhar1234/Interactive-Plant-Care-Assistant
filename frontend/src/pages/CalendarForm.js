@@ -29,11 +29,13 @@ function CalendarForm() {
         body: JSON.stringify(formData),
       });
   
+      console.log("Response:", response);
       if (!response.ok) {
         throw new Error("Failed to create event !!!");
       }
-  
+
       const result = await response.json();
+      console.log("Result data:", result);
       console.log("Event created successfully:", result);
       alert("Event created successfully!");
     } catch (error) {

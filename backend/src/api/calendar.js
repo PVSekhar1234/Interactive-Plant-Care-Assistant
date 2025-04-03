@@ -1,28 +1,30 @@
 
 const express = require('express')
+const app = express()
 const path = require('path')
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const app = express()
-
 app.use(express.static(path.join(__dirname, 'public')))
+require('dotenv').config();
 app.set('views', __dirname + '/public/views');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-}));
-
-const router = express.Router();
-
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
 const oAuth2Client = new OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI)
+
+
+const router = express.Router();
+
+// Ensure session middleware is applied to the router
+router.use(session({
+    secret: process.env.SESSION_SECRET || "2f4855d3af1c03c943e8caa05fb6335ce2efdeff2e04557a9022831d2372f3c7",
+    resave: false,
+    saveUninitialized: true
+}));
 
 router.get('/', (req, res) =>{
   res.render('index.html');
@@ -60,15 +62,16 @@ router.get('/oauth2callback', async (req, res) => {
   
 
 router.post('/events', async (req, res) => {
-    const { date, startTime, endTime, summary, description } = req.body;
-
+    const { date, startTime, endTime, title, description } = req.body;
+    console.log("in events !!!!")
     // If tokens are not available, redirect to /auth with event data
+    console.log("Session Data**********************:", req.session);
     if (!req.session.tokens) {
         const query = new URLSearchParams({
             date,
             startTime,
             endTime,
-            summary,
+            title,
             description
         }).toString();
 
@@ -80,7 +83,7 @@ router.post('/events', async (req, res) => {
 });
 
 async function createEvent(req, res) {
-    const { date, startTime, endTime, summary, description } = req.query;
+    const { date, startTime, endTime, title, description } = req.query;
 
     oAuth2Client.setCredentials(req.session.tokens);
     const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
@@ -89,7 +92,7 @@ async function createEvent(req, res) {
     const eventEndTime = new Date(`${date}T${endTime}:00`);
 
     const event = {
-        summary,
+        title,
         description,
         colorId: 2,
         start: { dateTime: eventStartTime.toISOString(), timeZone: 'Asia/Kolkata' },
