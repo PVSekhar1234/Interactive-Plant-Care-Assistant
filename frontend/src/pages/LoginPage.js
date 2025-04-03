@@ -19,6 +19,7 @@ function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
+      googleProvider.setCustomParameters({ prompt: 'select_account' }); // Ensure single popup
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       

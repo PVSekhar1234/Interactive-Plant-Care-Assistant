@@ -1,65 +1,94 @@
 import React, { useState } from "react";
+import { auth, db } from "../firebase";
+import { doc, setDoc, collection, serverTimestamp } from "firebase/firestore";
 import axios from "axios";
 
-function UploadModal({ onClose }) {
+const UploadModal = ({ onClose, onPlantAdded }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return alert("Please select an image.");
+    if (!selectedFile) {
+      setError("Please select an image.");
+      return;
+    }
 
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("image", selectedFile);
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await axios.post("http://localhost:5000/api/plant/identify", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not authenticated");
 
-      setResult(response.data);
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+
+      const response = await axios.post(
+        "http://localhost:5000/api/plant/identify",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      if (!response.data || response.data.error) {
+        throw new Error(response.data.error || "Failed to identify plant");
+      }
+
+      const plantData = {
+        name: response.data.suggestions[0]?.name || "Unknown Plant",
+        probability: response.data.suggestions[0]?.probability || 0,
+        similar_images: response.data.suggestions[0]?.similar_images || [],
+        isPlant: response.data.isPlant,
+        plantProbability: response.data.plantProbability,
+        timestamp: serverTimestamp(),
+      };
+
+      // Save plant in Firestore under the logged-in user's collection
+      const plantRef = doc(collection(db, "users", user.uid, "plants"));
+      await setDoc(plantRef, plantData);
+
+      // Notify the homepage to update
+      onPlantAdded(plantData);
+
+      setLoading(false);
+      onClose(); // Close modal
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to identify plant.");
-    } finally {
-      setUploading(false);
+      setError(error.message || "Failed to upload plant.");
+      setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-lg font-semibold mb-4">Upload Plant Image</h2>
-        <input type="file" onChange={handleFileChange} className="mb-4" />
-        <button
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
-          onClick={handleUpload}
-          disabled={uploading}
-        >
-          {uploading ? "Uploading..." : "Identify Plant"}
-        </button>
-
-        {result && (
-          <div className="mt-4">
-            <h3 className="text-md font-semibold">Top Match:</h3>
-            <p>{result.suggestions[0]?.name || "Unknown"}</p>
-          </div>
-        )}
-
-        <button
-          className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 w-full"
-          onClick={onClose}
-        >
-          Close
-        </button>
+        <h2 className="text-xl font-bold mb-4">Upload New Plant</h2>
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={handleUpload}
+            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+            disabled={loading}
+          >
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+          <button
+            onClick={onClose}
+            className="bg-gray-400 text-white px-4 py-2 rounded"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default UploadModal;
