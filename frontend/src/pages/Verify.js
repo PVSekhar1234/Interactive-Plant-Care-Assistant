@@ -9,7 +9,7 @@ import {
 import { collection, query, where, getDocs, updateDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
-function ActionHandler() {
+function Verify() {
   const [message, setMessage] = useState('Processing...');
   const [newPassword, setNewPassword] = useState('');
   const [searchParams] = useSearchParams();
@@ -123,4 +123,4 @@ function ActionHandler() {
   );
 }
 
-export default ActionHandler;
+export default Verify;

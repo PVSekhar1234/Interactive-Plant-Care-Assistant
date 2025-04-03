@@ -23,7 +23,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/plant/:id" element={<PlantPage/>} />
           </Route>
-          <Route path='/verify' element={<Verify/>}/>
+          <Route path="/verify" element={<Verify/>} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<ProfilePage />} />
