@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from "react";
 import { Link } from 'react-router-dom';
+import UploadModal from "../components/UploadModal";
 
 function HomePage() {
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+
   const plants = [
     { id: 1, name: 'Plant 1' },
     { id: 2, name: 'Plant 2' },
@@ -12,7 +15,10 @@ function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors">
+        <button 
+          className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors"
+          onClick={() => setIsUploadOpen(true)}
+        >
           Upload New Plant
         </button>
         <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors">
@@ -33,6 +39,7 @@ function HomePage() {
           </Link>
         ))}
       </div>
+      {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} />}
     </div>
   );
 }
