@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReminderForm from '../components/ReminderForm';
-
 function PlantPage() {
   const { id } = useParams();
   const [isReminderFormOpen, setIsReminderFormOpen] = useState(false);
@@ -54,10 +53,12 @@ function PlantPage() {
         </div>
       </div>
 
-      <ReminderForm
-        isOpen={isReminderFormOpen}
-        onClose={() => setIsReminderFormOpen(false)}
-      />
+      {isReminderFormOpen && (
+        <ReminderForm
+          isOpen={isReminderFormOpen}
+          onClose={() => setIsReminderFormOpen(false)}  // Close modal when onClose is triggered
+        />
+      )}
     </div>
   );
 }
