@@ -28,6 +28,7 @@ function CalendarForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+  
       console.log("Response:", response);
       if (!response.ok) {
         throw new Error("Failed to create event !!!");
