@@ -15,8 +15,6 @@ app.use(bodyParser.json());
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
 const oAuth2Client = new OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI)
-
-
 const router = express.Router();
 
 // Ensure session middleware is applied to the router
@@ -92,7 +90,7 @@ router.get('/create-event', async (req, res) => {
 
     try {
         await calendar.events.insert({ calendarId: 'primary', resource: event });
-        res.send('Event successfully added to your calendar!');
+        res.send('Event added to your calendar!');
     } catch (err) {
         console.error('Error creating event:', err);
         res.status(500).send('Failed to add event');
@@ -101,8 +99,10 @@ router.get('/create-event', async (req, res) => {
 // Check if the user is authenticated
 router.get('/check-auth', (req, res) => {
     if (req.session.tokens) {
+        console.log("User is authenticated:", req.session.tokens);
         res.json({ isAuthenticated: true });
     } else {
+        console.log("User is not authenticated");
         res.json({ isAuthenticated: false });
     }
 });
@@ -115,6 +115,7 @@ router.get('/check-auth', (req, res) => {
 //         access_type: 'offline',
 //         scope: ['https://www.googleapis.com/auth/calendar.events'],
 //         prompt: 'consent',
+//         redirect_uri: process.env.REDIRECT_URI,
 //     });
 
 //     res.redirect(authUrl);
