@@ -95,13 +95,13 @@ function LoginPage() {
         const userDoc = querysnapshot.docs[0];
          const userData = userDoc.data();
         console.log("User Data from Firestore:", userData);
-// Query Firestore for the user's document using email
+        
         console.log("User Verifification Status:", userData.verified);
         // If email is not verified, resend verification and sign out
         if (!userData.verified) {
-          setError("Your email is not verified. A verification email has been sent again.");
           await sendEmailVerification(user);
-          await signOut(auth);  // Logout user
+          await signOut(auth);
+          setError("Your email is not verified. A verification email has been sent again.");
           return;
         }
   
@@ -142,6 +142,97 @@ function LoginPage() {
     }
   };
   
+
+
+return (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-md w-full space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-center text-green-600">Plant Care Assistant</h1>
+        <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
+          {isLogin ? 'Sign in to your account' : 'Create new account'}
+        </h2>
+      </div>
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="rounded-md shadow-sm -space-y-px">
+          <div>
+            <input
+              type="email"
+              required
+              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+              placeholder="Email address"
+              value={email}
+              onChange={handleEmailChange}
+            />
+            {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
+          </div>
+          <div>
+            <input
+              type="password"
+              required
+              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+        
+        {isLogin && (
+        <div className="text-right">
+          <button
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+            className="text-sm text-green-600 hover:text-green-500"
+          >
+            Forgot Password?
+          </button>
+        </div>
+      )}
+
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+        <div className="space-y-4">
+          <button
+            type="submit"
+            disabled={!email || emailError}
+            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+              email && !emailError ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+          >
+            {isLogin ? 'Sign in' : 'Sign up'}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            <img 
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+              alt="Google" 
+              className="w-5 h-5 mr-2"
+            />
+            Continue with Google
+          </button>
+        </div>
+      </form>
+
+      <div className="text-center">
+        <button
+          className="text-green-600 hover:text-green-500"
+          onClick={() => setIsLogin(!isLogin)}
+        >
+          {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
+        </button>
+      </div>
+    </div>
+  </div>
+);
+}
+
+export default LoginPage;
+
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -287,91 +378,3 @@ function LoginPage() {
 // }
 
 // export default LoginPage;
-return (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div className="max-w-md w-full space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-center text-green-600">Plant Care Assistant</h1>
-        <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
-          {isLogin ? 'Sign in to your account' : 'Create new account'}
-        </h2>
-      </div>
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="rounded-md shadow-sm -space-y-px">
-          <div>
-            <input
-              type="email"
-              required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-              placeholder="Email address"
-              value={email}
-              onChange={handleEmailChange}
-            />
-            {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
-          </div>
-          <div>
-            <input
-              type="password"
-              required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-        </div>
-        
-        {isLogin && (
-        <div className="text-right">
-          <button
-            type="button"
-            onClick={() => navigate("/forgot-password")}
-            className="text-sm text-green-600 hover:text-green-500"
-          >
-            Forgot Password?
-          </button>
-        </div>
-      )}
-
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-        <div className="space-y-4">
-          <button
-            type="submit"
-            disabled={!email || emailError}
-            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
-              email && !emailError ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
-          >
-            {isLogin ? 'Sign in' : 'Sign up'}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleGoogleSignIn}
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            <img 
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-              alt="Google" 
-              className="w-5 h-5 mr-2"
-            />
-            Continue with Google
-          </button>
-        </div>
-      </form>
-
-      <div className="text-center">
-        <button
-          className="text-green-600 hover:text-green-500"
-          onClick={() => setIsLogin(!isLogin)}
-        >
-          {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
-        </button>
-      </div>
-    </div>
-  </div>
-);
-}
-
-export default LoginPage;
