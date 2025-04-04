@@ -5,10 +5,12 @@ import { collection, query, where, getDocs, doc, getDoc } from "firebase/firesto
 import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import UploadModal from "../components/UploadModal";
+import ManualPlantModal from "../components/ManualPlantModal";
 
 function HomePage() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [plants, setPlants] = useState([]);
+  const [isManualOpen, setIsManualOpen] = useState(false);
 
   // Fetch plants from Firestore
   const fetchPlants = async () => {
@@ -18,7 +20,7 @@ function HomePage() {
     try {
       const q = query(collection(db, "users", user.uid, "plants"));
       const querySnapshot = await getDocs(q);
-      
+
       const fetchedPlants = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -42,7 +44,7 @@ function HomePage() {
   const auth = getAuth();
   const navigate = useNavigate();
   const user = auth.currentUser;
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
   useEffect(() => {
     if (user) {
       // Fetch user data from Firestore
@@ -76,7 +78,7 @@ function HomePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-       <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-4">
         <button
           onClick={handleLogout}
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
@@ -86,13 +88,16 @@ function HomePage() {
       </div>
       <h1 className="text-2xl font-bold mb-4">Welcome {username ? username : 'User'}!</h1> {/* Display username */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <button 
+        <button
           className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors"
           onClick={() => setIsUploadOpen(true)}
         >
           Upload New Plant
         </button>
-        <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors">
+        <button
+          className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors"
+          onClick={() => setIsManualOpen(true)}
+        >
           Enter New Plant
         </button>
       </div>
@@ -105,17 +110,33 @@ function HomePage() {
             to={`/plant/${plant.id}`}
             className="bg-green-100 p-4 rounded-lg hover:bg-green-200 transition-colors"
           >
-            <img src={plant.similar_images[0] || ""} alt={plant.name} className="w-full h-32 object-cover rounded-lg" />
+            {plant.similar_images && plant.similar_images.length > 0 ? (
+              <img
+                src={plant.similar_images[0]}
+                alt={plant.name}
+                className="w-full h-32 object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-full h-32 bg-gray-300 flex items-center justify-center rounded-lg text-gray-600">
+                No Image
+              </div>
+            )}
             <p className="text-center font-bold">{plant.name}</p>
             <p className="text-center text-gray-500">Confidence: {(plant.probability * 100).toFixed(2)}%</p>
           </Link>
         ))}
       </div>
-      
+
       {isUploadOpen && (
-        <UploadModal 
-          onClose={() => setIsUploadOpen(false)} 
-          onPlantAdded={handlePlantAdded} 
+        <UploadModal
+          onClose={() => setIsUploadOpen(false)}
+          onPlantAdded={handlePlantAdded}
+        />
+      )}
+      {isManualOpen && (
+        <ManualPlantModal
+          onClose={() => setIsManualOpen(false)}
+          onPlantAdded={handlePlantAdded}
         />
       )}
     </div>
