@@ -11,7 +11,6 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"] // Specify allowed headers
 }));
 app.use(express.json());
-const cors = require("cors");
 app.use(cors()); // Allow all origins
 
 app.use(cors({ origin: "http://localhost:3000",  methods: "GET,POST,PUT,DELETE", credentials: true }));

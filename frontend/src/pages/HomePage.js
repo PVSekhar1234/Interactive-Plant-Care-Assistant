@@ -4,7 +4,6 @@ import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import UploadModal from "../components/UploadModal";
 
 function HomePage() {
