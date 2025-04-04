@@ -150,11 +150,11 @@ import { useState, useEffect } from "react";
 
 const ReminderForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
+    title: "",
+    description: "",
     date: "",
     startTime: "",
     endTime: "",
-    title: "",
-    description: "",
   });
 
   // Debugging: Log component mount
@@ -235,14 +235,15 @@ const ReminderForm = ({ onClose }) => {
         <h2 className="text-2xl font-bold mb-4">Add Reminder</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Event Title" required className="w-full p-2 border rounded" />
+          <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Event Description" className="w-full p-2 border rounded"></textarea>
           <input type="date" name="date" value={formData.date} onChange={handleChange} required className="w-full p-2 border rounded" />
           <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required className="w-full p-2 border rounded" />
           <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required className="w-full p-2 border rounded" />
-          <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Event Title" required className="w-full p-2 border rounded" />
-          <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Event Description" className="w-full p-2 border rounded"></textarea>
+        
 
           <button type="submit" className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">
-            Create Reminder
+            Add Reminder
           </button>
         </form>
       </div>
