@@ -86,6 +86,12 @@ router.post("/identify", upload.single("image"), async (req, res) => {
             suggestions: formattedSuggestions
         });
 
+        // Delete the uploaded image
+        fs.unlink(imagePath, (err) => {
+            if (err) console.error("Error deleting uploaded file:", err);
+            else console.log("Temporary file deleted:", imagePath);
+        });
+
     } catch (error) {
         console.error("Error from Plant.id API:", error.response ? error.response.data : error.message);
         res.status(500).json({ error: "Failed to identify plant." });
