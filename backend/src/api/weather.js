@@ -1,52 +1,28 @@
-const dotenv = require("dotenv");
-dotenv.config();
+const express = require('express');
+const axios = require('axios');
+require('dotenv').config();
 
-const fetch = require('node-fetch').default; // Correct way to import fetch in Node.js
+const router = express.Router();
 
-// Replace with your OpenWeatherMap API key
-const userApi = process.env.WEATHER_API_KEY;
+// Fetch Weather Data
+router.get('/getweather', async (req, res) => {
+    const { lat, lon } = req.query;
 
-async function getWeather(location) {
-    try {
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${userApi}&units=metric`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        console.log("API Response:", data); // Debugging step
-
-        // Check if the API response contains an error
-        if (data.cod !== 200) {
-            console.log(`Error: ${data.message}`);
-            return;
-        }
-
-        // Extract weather details
-        const tempCity = data.main.temp.toFixed(2);  // Already in Celsius (°C)
-        const weatherDesc = data.weather[0].description;
-        const humidity = data.main.humidity;
-        const windSpeed = data.wind.speed.toFixed(2);  // Already in m/s
-
-        const dateTime = new Date().toLocaleString();
-
-        console.log("-------------------------------------------------------------");
-        console.log(`Weather Stats for - ${location.toUpperCase()}  || ${dateTime}`);
-        console.log("-------------------------------------------------------------");
-        console.log(`Current temperature is: ${tempCity}°C`);
-        console.log(`Current weather desc  : ${weatherDesc}`);
-        console.log(`Current Humidity      : ${humidity}%`);
-        console.log(`Current wind speed    : ${windSpeed} m/s`);
-    } catch (error) {
-        console.error("Error fetching weather data:", error);
+    if (!lat || !lon) {
+        return res.status(400).json({ error: "Latitude and Longitude are required" });
     }
-}
 
-// Example usage
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
+    const API_KEY = process.env.WEATHER_API_KEY;
+    const URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+
+    try {
+        const response = await axios.get(URL);
+        console.log("Full OpenWeatherMap Response:", response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        res.status(500).json({ error: "Failed to fetch weather data" });
+    }
 });
 
-readline.question("Enter the city name: ", (location) => {
-    getWeather(location);
-    readline.close();
-});
+module.exports = router;

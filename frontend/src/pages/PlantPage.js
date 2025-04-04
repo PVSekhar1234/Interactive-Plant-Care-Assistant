@@ -11,7 +11,8 @@ function PlantPage() {
   const [loading, setLoading] = useState(true);
   const [isReminderFormOpen, setIsReminderFormOpen] = useState(false);
   const [error, setError] = useState("");
-
+  const [weather, setWeather] = useState(null);
+  const [weatherUpdatedDate, setWeatherUpdatedDate] = useState("dd/mm/yy"); // State to store weather update date
   useEffect(() => {
     const fetchPlantData = async () => {
       try {
@@ -39,6 +40,30 @@ function PlantPage() {
 
     fetchPlantData();
   }, [id]);
+
+
+  const getWeather = async () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        try {
+          const response = await fetch(`http://localhost:5000/api/weather/getweather?lat=${lat}&lon=${lon}`);
+          const data = await response.json();
+          console.log(data);
+          setWeather(data); // ✅ Update weather state
+          setWeatherUpdatedDate(new Date().toLocaleDateString()); // Update weather update date
+        } catch (error) {
+          console.error("Error fetching weather data:", error);
+        }
+      }, (error) => {
+        console.error("Error getting location:", error);
+      });
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
 
   // Handle Plant Deletion
   const handleDelete = async () => {
@@ -105,11 +130,28 @@ function PlantPage() {
         <div className="space-y-4">
           <div>
             <div className="bg-green-100 p-4 rounded-lg mb-2">
-              Weather-Based Care Log (Coming Soon)
+                {/* ✅ Display weather data if available */}
+                {!weather && (
+                  <p>Get Weather Data for your Plant care</p>   
+                )}
+                {weather && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded">
+                    <h3 className="text-lg font-bold">{weather.name}</h3>
+                    <p>Temperature: {weather.main.temp}°C</p>
+                    <p>Condition: {weather.weather[0].description}</p>
+                    <p>Humidity:{weather.main.humidity}</p>
+                    <p>Expected Rain (last hour):{" "}
+                  {weather.rain && weather.rain['1h'] ? `${weather.rain['1h']} mm` : 'No rain'}
+                </p>
+                  </div>
+                )}
             </div>
-            <p className="text-sm text-gray-600">Updated on dd/mm/yy</p>
-            <button className="w-full bg-green-600 text-white p-2 rounded mt-2 hover:bg-green-700">
-              Update Weather Care Suggestions
+            <p className="text-sm text-gray-600">Updated on {weatherUpdatedDate}</p>
+            <button 
+              className="w-full bg-green-600 text-white p-2 rounded mt-2 hover:bg-green-700"
+              onClick={getWeather}
+            >
+              Get Weather Data
             </button>
           </div>
 
