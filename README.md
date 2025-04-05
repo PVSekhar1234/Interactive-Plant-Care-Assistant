@@ -25,7 +25,7 @@ git clone https://github.com/PVSekhar1234/Interactive-Plant-Care-Assistant.git
 cd Interactive-Plant-Care-Assistant
 ```
 
-#### 4. Start the frontend server
+#### 2. Start the frontend server
 
 ```bash
 cd frontend
@@ -33,7 +33,7 @@ npm install
 npm start
 ```
 
-#### 5. Start the backend server (in separate terminal)
+#### 3. Start the backend server (in separate terminal)
 
 ```bash
 cd backend
@@ -57,7 +57,7 @@ To enable plant identification features, follow these steps to obtain your API k
 
 ### 2. Configure `.env` File
 
-Add the following line to your `.env` file located in the **backend** directory:
+Create an `.env` file in the **backend** directory with the following variables:
 
 ```ini
 PLANT_ID_API_KEY=your-plant-id-api-key
@@ -144,7 +144,7 @@ node ./src/api/weather.js
 
 ### 2. Configure `.env` File
 
-Add these in the  `.env` file in the **backend** directory:
+Add these in the  `.env` file in the **frontend** directory:
 
 ```ini
 REACT_APP_FIREBASE_API_KEY=your_api_key 
@@ -173,7 +173,7 @@ Obtain credentials from **Google Cloud Console**:
 
 ### 2. Configure `.env` File
 
-Create a `.env` file in the **backend** directory:
+Add these in the `.env` file in the **backend** directory:
 
 ```ini
 CLIENT_ID=your-google-api-client-id
