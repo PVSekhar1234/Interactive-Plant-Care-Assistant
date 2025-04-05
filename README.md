@@ -122,6 +122,9 @@ To enable weather-based plant care recommendations:
 1. Go to [Weather API Provider](https://openweathermap.org/api).
 2. Sign up and generate an **API Key**.
 3. Copy the API key for later use.
+4. Go to https://huggingface.co/
+5. Sign up and generate and **API Key**.
+6. Copy the API key for later use.
 
 ### 2. Configure `.env` File
 
@@ -129,6 +132,7 @@ Create or update the `.env` file in the **backend** directory:
 
 ```ini
 WEATHER_API_KEY=your-weather-api-key
+HG_API_KEY=your_hugging_face_api_key
 ```
 
 ### 3. Running the Weather API Demo
