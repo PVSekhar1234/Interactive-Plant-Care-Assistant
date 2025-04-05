@@ -188,11 +188,13 @@ Once reminders are set, users will receive notifications in their **Google Calen
 1. **Start frontend server:**
    ```bash
    cd frontend
+   npm install
    npm start
    ```
 2. **Start backend server:**
    ```bash
    cd backend
+   npm install
    npm run dev
    ```
 
