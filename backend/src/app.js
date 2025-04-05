@@ -20,5 +20,6 @@ app.use(cors({ origin: "http://localhost:3000",  methods: "GET,POST,PUT,DELETE",
 app.use("/api/plant", plantRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/weather", weatherRoutes); // Use weather routes
+app.use("/api/gpt", require("./api/gpt")); // Use GPT routes
 
 module.exports = app;

@@ -3,9 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "../firebase";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import ReminderForm from "../components/ReminderForm";
-
+import { updateDoc } from "firebase/firestore";
 function PlantPage() {
   const { id } = useParams(); // Get plant ID from URL
+  const [loadingRecommendation, setLoadingRecommendation] = useState(false);
   const navigate = useNavigate();
   const [plant, setPlant] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,7 @@ function PlantPage() {
 
 
   const getWeather = async () => {
+    setLoadingRecommendation(true); // Set loading state to true
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
@@ -51,11 +53,42 @@ function PlantPage() {
         try {
           const response = await fetch(`http://localhost:5000/api/weather/getweather?lat=${lat}&lon=${lon}`);
           const data = await response.json();
+          console.log("Plant data:", plant);
           console.log(data);
+          const response1 = await fetch('http://localhost:5000/api/gpt/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              prompt: `What are the care instructions for ${plant?.name} in temperature ${data.main.temp}°C, humidity ${data.main.humidity}%, and ${data.weather[0].description} weather?
+             Give me a  detailed recommendation for the plant care, including watering, sunlight, and any other specific needs`
+            }),
+          });
+          const data1 = await response1.json();
+          console.log("Hg response:", data1.reply);
+          const user = auth.currentUser;
+if (user && id) {
+  const plantRef = doc(db, "users", user.uid, "plants", id);
+  await updateDoc(plantRef, {
+    latestRecommendation: data1.reply,
+    recommendationUpdatedAt: new Date().toISOString(),
+  });
+}
           setWeather(data); // ✅ Update weather state
           setWeatherUpdatedDate(new Date().toLocaleDateString()); // Update weather update date
+          const updatedData = {
+            latestRecommendation: data1.reply,
+            recommendationUpdatedAt: new Date().toISOString(),
+          };
+          setPlant(prev => ({
+            ...prev,
+            ...updatedData,
+          }));
         } catch (error) {
           console.error("Error fetching weather data:", error);
+        } finally {
+          setLoadingRecommendation(false); // Set loading state to false
         }
       }, (error) => {
         console.error("Error getting location:", error);
@@ -130,23 +163,32 @@ function PlantPage() {
         <div className="space-y-4">
           <div>
             <div className="bg-green-100 p-4 rounded-lg mb-2">
-                {/* ✅ Display weather data if available */}
-                {!weather && (
-                  <p>Get Weather Data for your Plant care</p>   
-                )}
-                {weather && (
-                  <div className="mt-4 p-4 bg-gray-100 rounded">
-                    <h3 className="text-lg font-bold">{weather.name}</h3>
-                    <p>Temperature: {weather.main.temp}°C</p>
-                    <p>Condition: {weather.weather[0].description}</p>
-                    <p>Humidity:{weather.main.humidity}</p>
-                    <p>Expected Rain (last hour):{" "}
-                  {weather.rain && weather.rain['1h'] ? `${weather.rain['1h']} mm` : 'No rain'}
-                </p>
-                  </div>
-                )}
+            {loadingRecommendation ? (
+  <p className="text-sm text-blue-500">Processing your request...</p>
+) : (
+  plant?.latestRecommendation ? (
+    <div className="text-sm text-gray-700 space-y-2">
+  {plant?.latestRecommendation
+    ?.split('\n')
+    .filter(line => line.trim() !== '')
+    .map((line, index) => (
+      <p key={index} className={line.trim().startsWith('-') ? 'pl-4 list-disc' : ''}>
+        {line}
+      </p>
+    ))}
+</div>
+
+  ) : (
+    <p className="text-sm text-gray-500">Click the button to get recommendations</p>
+  )
+)}
+
             </div>
-            <p className="text-sm text-gray-600">Updated on {weatherUpdatedDate}</p>
+            <p className="text-sm text-gray-600">
+  Updated on {plant?.recommendationUpdatedAt 
+    ? new Date(plant.recommendationUpdatedAt).toLocaleDateString() 
+    : "dd/mm/yy"}
+</p>
             <button 
               className="w-full bg-green-600 text-white p-2 rounded mt-2 hover:bg-green-700"
               onClick={getWeather}
