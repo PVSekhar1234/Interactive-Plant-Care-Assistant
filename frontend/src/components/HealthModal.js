@@ -17,6 +17,7 @@ function HealthModal({ isOpen, onClose, onResult, plantName}) {
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
+      console.log("Plant Name:", plantName);
       formData.append("plantName", plantName);
       const response = await fetch("http://localhost:5000/api/plant/health", {
         method: "POST",

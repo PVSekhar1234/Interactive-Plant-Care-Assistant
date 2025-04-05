@@ -171,7 +171,7 @@ function PlantPage() {
                 <div className="mt-4">
                   <h4 className="font-semibold">Possible Issues:</h4>
                   <ul className="list-disc ml-5 mt-1">
-                    {healthInfo.disease.suggestions.map((sugg, idx) => (
+                    {healthInfo.disease.suggestions.slice(0, 5).map((sugg, idx) => (
                       <li key={idx}>
                         <strong>{sugg.name}</strong>: {(sugg.probability * 100).toFixed(2)}%
                       </li>

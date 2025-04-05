@@ -108,6 +108,7 @@ router.post("/health", upload.single("image"), async (req, res) => {
     }
   
     const imagePath = req.file.path;
+    const plantName = req.body.plantName;
     console.log("Uploaded image path:", imagePath);
   
     const base64Image = encodeImageToBase64(imagePath);
@@ -118,26 +119,12 @@ router.post("/health", upload.single("image"), async (req, res) => {
   
     try {
       console.log("Sending image to Plant.id health assessment API...");
-    //   const response = await axios.post(
-    //     "https://api.plant.id/v3/health_assessment",
-    //     {
-    //       images: [base64Image],
-    //       health: "auto",
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         "Api-Key": PLANT_ID_API_KEY,
-    //       },
-    //     }
-    //   );
+      const requestBody = {
+          images: [base64Image],
+      };
       const response = await axios.post(
         "https://plant.id/api/v3/health_assessment?details=local_name,description,url,treatment,classification,common_names,cause",
-        {
-            images: [base64Image],
-            plant_language: "en",
-            plant_name: plantName || undefined // optional
-        },
+        requestBody,
         {
           headers: {
             "Content-Type": "application/json",
