@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "../firebase";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import ReminderForm from "../components/ReminderForm";
+import HealthModal from "../components/HealthModal";
 import { updateDoc } from "firebase/firestore";
 function PlantPage() {
   const { id } = useParams(); // Get plant ID from URL
@@ -14,6 +15,9 @@ function PlantPage() {
   const [error, setError] = useState("");
   const [weather, setWeather] = useState(null);
   const [weatherUpdatedDate, setWeatherUpdatedDate] = useState("dd/mm/yy"); // State to store weather update date
+  const [healthInfo, setHealthInfo] = useState(null);
+  const [healthUpdatedDate, setHealthUpdatedDate] = useState("dd/mm/yy");
+  const [isHealthModalOpen, setIsHealthModalOpen] = useState(false);
   useEffect(() => {
     const fetchPlantData = async () => {
       try {
@@ -75,7 +79,7 @@ if (user && id) {
     recommendationUpdatedAt: new Date().toISOString(),
   });
 }
-          setWeather(data); // ✅ Update weather state
+          setWeather(data); // Update weather state
           setWeatherUpdatedDate(new Date().toLocaleDateString()); // Update weather update date
           const updatedData = {
             latestRecommendation: data1.reply,
@@ -101,20 +105,16 @@ if (user && id) {
   // Handle Plant Deletion
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this plant?")) return;
-  
     try {
       const user = auth.currentUser;
       if (!user) {
         setError("User not authenticated.");
         return;
       }
-  
       const plantRef = doc(db, "users", user.uid, "plants", id);
       await deleteDoc(plantRef);
-  
       console.log("Plant deleted successfully!");
       navigate("/home"); // Redirect to homepage
-  
     } catch (err) {
       console.error("Error deleting plant:", err);
       setError("Failed to delete plant. Please try again.");
@@ -197,15 +197,42 @@ if (user && id) {
             </button>
           </div>
 
-          <div>
-            <div className="bg-green-100 p-4 rounded-lg mb-2">
-              Health Monitoring Log (Coming Soon)
+          {healthInfo ? (
+            <div>
+              <p><strong>Status:</strong> {healthInfo.is_healthy?.binary ? "Healthy" : "Unhealthy"}</p>
+              <p>
+                <strong>Health Probability:</strong>{" "}
+                {(healthInfo.is_healthy?.probability * 100).toFixed(2)}%
+              </p>
+              <p>
+                <strong>Plant Detection Confidence:</strong>{" "}
+                {(healthInfo.is_plant?.probability * 100).toFixed(2)}%
+              </p>
+
+              {healthInfo.disease?.suggestions?.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-semibold">Possible Issues:</h4>
+                  <ul className="list-disc ml-5 mt-1">
+                    {healthInfo.disease.suggestions.map((sugg, idx) => (
+                      <li key={idx}>
+                        <strong>{sugg.name}</strong>: {(sugg.probability * 100).toFixed(2)}%
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            <p className="text-sm text-gray-600">Updated on dd/mm/yy</p>
-            <button className="w-full bg-green-600 text-white p-2 rounded mt-2 hover:bg-green-700">
-              Update Health Monitoring
-            </button>
-          </div>
+          ) : (
+            "Health Monitoring Log (No data yet)"
+          )}
+          <p className="text-sm text-gray-600">Updated on {healthUpdatedDate}</p>
+          <button
+            className="w-full bg-green-600 text-white p-2 rounded mt-2 hover:bg-green-700"
+            onClick={() => setIsHealthModalOpen(true)}
+          >
+            Upload Image for Health Check
+          </button>
+
 
           <button
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
@@ -222,6 +249,18 @@ if (user && id) {
           onClose={() => setIsReminderFormOpen(false)}  // Close modal when onClose is triggered
         />
       )}
+      {isHealthModalOpen && (
+        <HealthModal
+          isOpen={isHealthModalOpen}
+          onClose={() => setIsHealthModalOpen(false)}
+          plantName={plant?.name}
+          onResult={(result) => {
+            setHealthInfo(result);
+            setHealthUpdatedDate(new Date().toLocaleDateString());
+          }}
+        />
+      )}
+
     </div>
   );
 }

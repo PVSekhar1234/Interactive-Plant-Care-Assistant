@@ -3,6 +3,7 @@ const cors = require("cors");
 const plantRoutes = require("./api/plant");
 const calendarRoutes = require("./api/calendar");
 const weatherRoutes = require("./api/weather");
+const chatbotRoutes = require("./api/chatbot");
 const app = express();
 
 // Enable CORS to allow frontend (React) to communicate with backend
@@ -21,5 +22,16 @@ app.use("/api/plant", plantRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/weather", weatherRoutes); // Use weather routes
 app.use("/api/gpt", require("./api/gpt")); // Use GPT routes
+app.use("/api/chatbot", chatbotRoutes);
+app.post("/api/chat", async (req, res) => {
+    try {
+        const { prompt } = req.body;
+        const response = await axios.post("http://localhost:5000/chat", { prompt });
+        res.json(response.data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Error communicating with chatbot API" });
+    }
+});
 
 module.exports = app;
