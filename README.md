@@ -25,30 +25,20 @@ git clone https://github.com/PVSekhar1234/Interactive-Plant-Care-Assistant.git
 cd Interactive-Plant-Care-Assistant
 ```
 
-#### 2. Initialize the project
-
-```bash
-npm init -y
-```
-
-#### 3. Install backend dependencies
-
-```bash
-npm install path body-parser express-session googleapis dotenv express ejs axios multer cors firebase-admin
-```
-
 #### 4. Start the frontend server
 
 ```bash
+cd frontend
+npm install
 npm start
 ```
 
-#### 5. Start the backend server 
+#### 5. Start the backend server (in separate terminal)
 
 ```bash
 cd backend
 npm install
-nodemon src/server.js
+npm run dev
 ```
 
 ---
@@ -82,8 +72,11 @@ PORT=5000
 
 #### Example Terminal Command
 
+To test the plant identification system, run the following commands from the **backend** directory in seperate terminals:
+
 ```bash
-curl -X POST -F "image=@backend/uploads/sample.jpg" http://localhost:5000/api/plant/identify
+npm run dev
+curl -X POST -F "image=@uploads/rose.jpg" http://localhost:5000/api/plant/identify
 ```
 
 #### Example Response
@@ -132,9 +125,10 @@ HG_API_KEY=your_hugging_face_api_key
 
 ### 3. Running the Weather API Demo
 
-To test the weather-based plant care system, run the following command from the **backend** directory:
+To test the weather-based plant care system, run the following commands from the **backend** directory in seperate terminals:
 
 ```bash
+npm run dev
 node ./src/api/weather.js
 ```
 
@@ -153,7 +147,7 @@ node ./src/api/weather.js
 Add these in the  `.env` file in the **backend** directory:
 
 ```ini
-REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_API_KEY=your_api_key 
 REACT_APP_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
 REACT_APP_FIREBASE_PROJECT_ID=your_project_id
 REACT_APP_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
@@ -204,15 +198,7 @@ Once reminders are set, users will receive notifications in their **Google Calen
 2. **Start backend server:**
    ```bash
    cd backend
-   nodemon src/server.js
-   ```
-3. **Test Plant ID API:**
-   ```bash
-   curl -X POST -F "image=@backend/uploads/sample.jpg" http://localhost:5000/api/plant/identify
-   ```
-4. **Run Weather API Demo:**
-   ```bash
-   node ./src/api/weather.js
+   npm run dev
    ```
 
 ---
