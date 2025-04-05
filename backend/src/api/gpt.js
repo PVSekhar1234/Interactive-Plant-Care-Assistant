@@ -37,7 +37,7 @@ router.post('/generate', async (req, res) => {
     console.log("Received prompt:", prompt); // Log the received prompt
   try {
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-chat-hf',
+      'https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta',
       {
         method: 'POST',
         headers: {

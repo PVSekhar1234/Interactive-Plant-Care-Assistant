@@ -66,11 +66,11 @@ function PlantPage() {
             },
             body: JSON.stringify({
               prompt: `What are the care instructions for ${plant?.name} in temperature ${data.main.temp}°C, humidity ${data.main.humidity}%, and ${data.weather[0].description} weather?
-             Give me a  detailed recommendation for the plant care, including watering, sunlight, and any other specific needs`
+             Give me a  detailed recommendation for the plant care, including watering, sunlight, and any other specific needs.`,
             }),
           });
           const data1 = await response1.json();
-          console.log("Hg response:", data1.reply);
+          console.log("GPT response:", data1.reply);
           const user = auth.currentUser;
 if (user && id) {
   const plantRef = doc(db, "users", user.uid, "plants", id);
@@ -162,7 +162,7 @@ if (user && id) {
         {/* Care Logs and Reminders */}
         <div className="space-y-4">
           <div>
-            <div className="bg-green-100 p-4 rounded-lg mb-2">
+            <div className="text-sm text-gray-700 space-y-2 max-h-60 overflow-y-auto pr-2 bg-green-100 p-2 rounded-md">
             {loadingRecommendation ? (
   <p className="text-sm text-blue-500">Processing your request...</p>
 ) : (
