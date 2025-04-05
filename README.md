@@ -125,7 +125,7 @@ HG_API_KEY=your-hugging-face-api-key
 
 ### 3. Get the Weather Based Recommendations for plants
 
-Once you click the ```Get Weather Data ``` you will receive the care recommendations.
+Once you click the ```Get Weather Data ``` button you will receive the care recommendations.
 
 ---
 
