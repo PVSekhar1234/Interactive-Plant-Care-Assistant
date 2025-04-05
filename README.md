@@ -39,25 +39,18 @@ npm init -y
 npm install path body-parser express-session googleapis dotenv express ejs axios multer cors firebase-admin
 ```
 
-#### 4. Install frontend dependencies
-
-```bash
-cd frontend
-npm install react-scripts
-```
-
 #### 5. Start the frontend server
 
 ```bash
 npm start
 ```
 
-#### 6. Start the backend server
+#### 6. Start the backend server 
 
 ```bash
 cd backend
 npm install
-npm run dev
+nodemon src/server.js
 ```
 
 ---
@@ -148,6 +141,31 @@ node ./src/api/weather.js
 
 ---
 
+## Firebase Setup
+
+### 1. Create a project in Firebase and register the application.
+
+1. Obtain Firebase config from Project Settings.
+2. Enable Email/Password and Google as the authentication providers. `(Firebase Console -> Your Project -> Authentication -> Sign-in Methods)`
+3. Set the Action URL in Templates as `http://localhost:3000/verify`. `(Firebase Console -> Your Project -> Authentication -> Templates)`
+
+### 2. Configure `.env` File
+
+Add these in the  `.env` file in the **backend** directory:
+
+```ini
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+```
+
+---
+
+
+
 ## Google Calendar Reminder Setup
 
 ### 1. Get Google API Credentials
@@ -158,8 +176,9 @@ Obtain credentials from **Google Cloud Console**:
 2. Create a new project.
 3. Enable the **Google Calendar API**.
 4. Generate OAuth 2.0 credentials.
-5. Download the credentials JSON file.
-6. Extract **Client ID**, **Client Secret**, and **Redirect URI**.
+5. Set the redirect URL as `http://localhost:5000/api/calendar/oauth2callback`
+6. Download the credentials JSON file.
+7. Extract **Client ID**, **Client Secret**, and **Redirect URI**.
 
 ### 2. Configure `.env` File
 
@@ -177,7 +196,6 @@ SESSION_SECRET=your-generated-session-secret-key
 Once reminders are set, users will receive notifications in their **Google Calendar** at scheduled times.
 
 ---
-
 ## Running the Application
 
 1. **Start frontend server:**
@@ -188,7 +206,7 @@ Once reminders are set, users will receive notifications in their **Google Calen
 2. **Start backend server:**
    ```bash
    cd backend
-   npm run dev
+   nodemon src/server.js
    ```
 3. **Test Plant ID API:**
    ```bash
