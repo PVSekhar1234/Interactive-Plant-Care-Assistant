@@ -2,9 +2,7 @@
 
 ## Project Description
 
-The **Interactive Plant Care Assistant** is a web application that helps plant owners manage their plants effectively. The system provides **plant identification**, **health diagnosis**, **weather-based care suggestions**, and **personalized reminders**. It integrates external APIs like **Plant.id**, **Weather API**, **GPT API**, and **Google Calendar API** to automate plant care routines.
-
-This module contains the implementation of reminding users to take care of their plants. Here, we use the **Google Calendar API** to set reminders in the user's Google Calendar.
+The **Interactive Plant Care Assistant** is a web application that helps plant owners manage their plants effectively. The system provides **plant identification**, **health diagnosis**, **weather-based care suggestions**, and **personalized reminders**. It integrates external APIs like **Plant.id**, **Weather API**, **Chat API**, and **Google Calendar API** to automate plant care routines.
 
 ---
 
@@ -39,13 +37,13 @@ npm init -y
 npm install path body-parser express-session googleapis dotenv express ejs axios multer cors firebase-admin
 ```
 
-#### 5. Start the frontend server
+#### 4. Start the frontend server
 
 ```bash
 npm start
 ```
 
-#### 6. Start the backend server 
+#### 5. Start the backend server 
 
 ```bash
 cd backend
@@ -57,41 +55,38 @@ nodemon src/server.js
 
 ## Plant Identification using Plant.id API
 
-### 1. Obtain Plant.id API Key
+### 1. Obtain a Plant.id API Key
 
-To use the **Plant.id API**, follow these steps:
+To enable plant identification features, follow these steps to obtain your API key:
 
-1. Go to [Plant.id API](https://plant.id/)
-2. Sign up for an account.
-3. Navigate to the **API Dashboard**.
-4. Generate an API key under the **API Credentials** section.
-5. Copy the API key for later use.
+1. Go to the [Plant.id website](https://web.plant.id/plant-identification-api/).
+2. Sign up for a free or paid account.
+3. Navigate to the **Dashboard** after logging in.
+4. Under the **API Keys** section, create a new key if one doesn't already exist.
+5. Copy the key for use in your backend environment.
 
-### 2. Set Up Environment Variables
+### 2. Configure `.env` File
 
-Create a `.env` file in the **backend** directory and add the following:
+Add the following line to your `.env` file located in the **backend** directory:
 
 ```ini
 PLANT_ID_API_KEY=your-plant-id-api-key
 PORT=5000
 ```
 
-### 3. API Endpoint for Plant Identification
-
-#### **Upload and Identify a Plant Image**
+### 3. Identify a Plant via Backend Endpoint
 
 - **Endpoint:** `POST /api/plant/identify`
-- **Request:**
-  - `image`: Image file (uploaded using `multipart/form-data`)
-- **Response:** JSON object with plant name, probability, and image suggestions.
+- **Request:** Form-data with the image file under the key `image`
+- **Response:** JSON containing plant name, probability of match, and related image suggestions.
 
-#### **Terminal Command to Test API**
+#### Example Terminal Command
 
 ```bash
-curl -X POST -F "image=@backend/uploads/rose.jpg" http://localhost:5000/api/plant/identify
+curl -X POST -F "image=@backend/uploads/sample.jpg" http://localhost:5000/api/plant/identify
 ```
 
-#### **Example Response**
+#### Example Response
 
 ```json
 {
@@ -99,11 +94,11 @@ curl -X POST -F "image=@backend/uploads/rose.jpg" http://localhost:5000/api/plan
   "data": {
     "suggestions": [
       {
-        "id": "02550314fb506af1",
-        "name": "Rosa chinensis",
-        "probability": 0.42,
+        "id": "123456789",
+        "name": "Ficus lyrata",
+        "probability": 0.85,
         "similar_images": [
-          "https://plant-id.ams3.cdn.digitaloceanspaces.com/similar_images/4/20a/4e51faf0387cc5685c1fa06bce7540ac4ddb0.jpeg"
+          "https://plant-id.cdn/ficus-image1.jpeg"
         ]
       }
     ]
@@ -123,7 +118,7 @@ To enable weather-based plant care recommendations:
 2. Sign up and generate an **API Key**.
 3. Copy the API key for later use.
 4. Go to https://huggingface.co/
-5. Sign up and generate and **API Key**.
+5. Sign up and generate a **Hugging Face API Key**.
 6. Copy the API key for later use.
 
 ### 2. Configure `.env` File
@@ -168,8 +163,6 @@ REACT_APP_FIREBASE_APP_ID=your_app_id
 
 ---
 
-
-
 ## Google Calendar Reminder Setup
 
 ### 1. Get Google API Credentials
@@ -200,6 +193,7 @@ SESSION_SECRET=your-generated-session-secret-key
 Once reminders are set, users will receive notifications in their **Google Calendar** at scheduled times.
 
 ---
+
 ## Running the Application
 
 1. **Start frontend server:**
@@ -214,7 +208,7 @@ Once reminders are set, users will receive notifications in their **Google Calen
    ```
 3. **Test Plant ID API:**
    ```bash
-   curl -X POST -F "image=@backend/uploads/rose.jpg" http://localhost:5000/api/plant/identify
+   curl -X POST -F "image=@backend/uploads/sample.jpg" http://localhost:5000/api/plant/identify
    ```
 4. **Run Weather API Demo:**
    ```bash

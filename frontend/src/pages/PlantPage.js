@@ -193,7 +193,7 @@ if (user && id) {
               className="w-full bg-green-600 text-white p-2 rounded mt-2 hover:bg-green-700"
               onClick={getWeather}
             >
-              Get Weather Data
+              Get Current Weather Based Recommendations
             </button>
           </div>
 
