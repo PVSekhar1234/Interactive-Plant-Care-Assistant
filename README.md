@@ -110,8 +110,8 @@ To enable weather-based plant care recommendations:
 1. Go to [Weather API Provider](https://openweathermap.org/api).
 2. Sign up and generate an **API Key**.
 3. Copy the API key for later use.
-4. Go to https://huggingface.co/
-5. Sign up and generate a **Hugging Face API Key**.
+4. Go to [zephyr-7b-beta Model API Provider](https://huggingface.co/).
+5. Sign up and generate a **API Key**.
 6. Copy the API key for later use.
 
 ### 2. Configure `.env` File
@@ -120,17 +120,12 @@ Create or update the `.env` file in the **backend** directory:
 
 ```ini
 WEATHER_API_KEY=your-weather-api-key
-HG_API_KEY=your_hugging_face_api_key
+HG_API_KEY=your-hugging-face-api-key
 ```
 
-### 3. Running the Weather API Demo
+### 3. Get the Weather Based Recommendations for plants
 
-To test the weather-based plant care system, run the following commands from the **backend** directory in seperate terminals:
-
-```bash
-npm run dev
-node ./src/api/weather.js
-```
+Once you click the ```Get Weather Data ``` you will receive the care recommendations.
 
 ---
 
