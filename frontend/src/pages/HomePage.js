@@ -102,23 +102,6 @@ function HomePage() {
         </button>
       </div>
 
-      <button
-        className="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors"
-        onClick={async () => {
-          try {
-            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/test`);
-            const data = await res.json();
-            console.log("Test API Response:", data);
-            alert("Test API Success: " + JSON.stringify(data));
-          } catch (error) {
-            console.error("Test API Error:", error);
-            alert("Test API Failed: " + error.message);
-          }
-        }}
-      >
-        Test API
-      </button>
-
       <h2 className="text-xl font-semibold mb-4">Previously Added Plants:</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {plants.map((plant) => (
