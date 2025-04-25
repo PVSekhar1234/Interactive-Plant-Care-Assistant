@@ -15,6 +15,7 @@ The **Interactive Plant Care Assistant** is a web application that helps plant o
 - **Google API Credentials** (for Calendar integration)
 - **Plant.id API Key** (for plant identification)
 - **Weather API Key** (for weather-based care suggestions)
+- **Open Router API Key** (for chat-bot)
 
 ### Step-by-Step Installation
 
@@ -151,6 +152,28 @@ REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
 
 ---
+
+## OpenRouter API Key Setup
+
+To enable the AI chatbot features via OpenRouter:
+
+### 1. Generate an OpenRouter API Key
+
+1. Visit [OpenRouter.ai](https://openrouter.ai/)
+2. Sign up or log in with your account.
+3. Navigate to your [API Keys Dashboard](https://openrouter.ai/keys)
+4. Click **"Create New Key"**
+5. Copy the generated API key.
+
+### 2. Configure `.env` File
+
+Add the following line to your `.env` file in the **backend** directory:
+
+```ini
+OPENROUTER_API_KEY=your-openrouter-api-key
+```
+
+--- 
 
 ## Google Calendar Reminder Setup
 
