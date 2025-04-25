@@ -19,10 +19,10 @@ console.log("CLIENT_ORIGIN:", CLIENT_ORIGIN);
 
 // Enable CORS for specified frontend
 app.use(cors({
-    origin: "*", // Allows all origins
+    origin: "http://localhost:3000", 
     methods: "*", // Allows all HTTP methods
     allowedHeaders: "*", // Allows all headers
-    // credentials: true
+    credentials: true
 }));
 
 app.use(express.json());
