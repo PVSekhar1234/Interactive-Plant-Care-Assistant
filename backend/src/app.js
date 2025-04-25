@@ -25,6 +25,8 @@ app.use(cors({
 
 app.use(express.json());
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
+
 // API routes
 app.use("/api/plant", plantRoutes);
 app.use("/api/calendar", calendarRoutes);
