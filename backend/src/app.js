@@ -15,17 +15,23 @@ const app = express();
 // Load frontend origin from .env
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "*";
 
+console.log("CLIENT_ORIGIN:", CLIENT_ORIGIN);
+
 // Enable CORS for specified frontend
 app.use(cors({
-    origin: CLIENT_ORIGIN,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
+    origin: "*", // Allows all origins
+    methods: "*", // Allows all HTTP methods
+    allowedHeaders: "*", // Allows all headers
+    // credentials: true
 }));
 
 app.use(express.json());
 
 app.get("/", (req, res) => res.send("Express on Vercel"));
+
+app.get("/api/test", (req, res) => {
+    res.json({ message: "CORS test success" });
+});
 
 // API routes
 app.use("/api/plant", plantRoutes);
