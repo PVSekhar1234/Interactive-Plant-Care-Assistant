@@ -1,35 +1,46 @@
 const express = require("express");
 const cors = require("cors");
+const axios = require("axios");
+const dotenv = require("dotenv");
+
 const plantRoutes = require("./api/plant");
 const calendarRoutes = require("./api/calendar");
 const weatherRoutes = require("./api/weather");
 const chatbotRoutes = require("./api/chatbot");
+
+dotenv.config();
+
 const app = express();
 
-// Enable CORS to allow frontend (React) to communicate with backend
+// Load frontend origin from .env
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "*";
+
+// Enable CORS for specified frontend
 app.use(cors({
-    origin: "http://localhost:3000", // Allow only frontend origin
-    methods: ["GET", "POST"], // Specify allowed methods
-    allowedHeaders: ["Content-Type", "Authorization"] // Specify allowed headers
+    origin: CLIENT_ORIGIN,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
 }));
+
 app.use(express.json());
-app.use(cors()); // Allow all origins
 
-app.use(cors({ origin: "http://localhost:3000",  methods: "GET,POST,PUT,DELETE", credentials: true }));
-
-// Use plant identification routes
+// API routes
 app.use("/api/plant", plantRoutes);
 app.use("/api/calendar", calendarRoutes);
-app.use("/api/weather", weatherRoutes); // Use weather routes
-app.use("/api/gpt", require("./api/gpt")); // Use GPT routes
+app.use("/api/weather", weatherRoutes);
+app.use("/api/gpt", require("./api/gpt"));
 app.use("/api/chatbot", chatbotRoutes);
+
+// Proxy chat route to local/internal chatbot
 app.post("/api/chat", async (req, res) => {
     try {
         const { prompt } = req.body;
-        const response = await axios.post("http://localhost:5000/chat", { prompt });
+        const backendUrl = process.env.INTERNAL_API_URL || ""; // fallback to same host
+        const response = await axios.post(`${backendUrl}/chat`, { prompt });
         res.json(response.data);
     } catch (error) {
-        console.log(error);
+        console.error("Chatbot proxy error:", error.message);
         res.status(500).json({ error: "Error communicating with chatbot API" });
     }
 });

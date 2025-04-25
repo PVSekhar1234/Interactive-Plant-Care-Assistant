@@ -55,11 +55,12 @@ function PlantPage() {
         const lon = position.coords.longitude;
 
         try {
-          const response = await fetch(`http://localhost:5000/api/weather/getweather?lat=${lat}&lon=${lon}`);
+          const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+          const response = await fetch(`${API_BASE_URL}/api/weather/getweather?lat=${lat}&lon=${lon}`);
           const data = await response.json();
           console.log("Plant data:", plant);
           console.log(data);
-          const response1 = await fetch('http://localhost:5000/api/gpt/generate', {
+          const response1 = await fetch(`${API_BASE_URL}/api/gpt/generate`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

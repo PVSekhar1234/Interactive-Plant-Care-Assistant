@@ -19,7 +19,8 @@ function HealthModal({ isOpen, onClose, onResult, plantName}) {
       formData.append("image", imageFile);
       console.log("Plant Name:", plantName);
       formData.append("plantName", plantName);
-      const response = await fetch("http://localhost:5000/api/plant/health", {
+      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+      const response = await fetch(`${API_BASE_URL}/api/plant/health`, {
         method: "POST",
         body: formData,
       });

@@ -18,7 +18,8 @@ function ChatbotModal({ onClose }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/chatbot", {
+      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+      const response = await fetch(`${API_BASE_URL}/api/chatbot`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
