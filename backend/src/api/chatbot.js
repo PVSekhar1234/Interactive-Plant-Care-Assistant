@@ -1,52 +1,54 @@
-const express = require("express");
+const express = require('express');
+const fetch = require('node-fetch');
 const router = express.Router();
-const OpenAI = require("openai");
-const axios = require("axios");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const client = new OpenAI();
-
-router.post("/", async (req, res) => {
-    const { messages } = req.body;
-    console.log("Request received at /api/chatbot: ", messages);
+router.post('/respond', async (req, res) => {
+  const { prompt } = req.body;
+  console.log("Received prompt 234:", prompt);
 
   try {
-    // const response = await axios.post(
-    //     "https://api.openai.com/v1/chat/completions",
-    //     {
-    //         model: "gpt-4o-mini", // Change to "gpt-3.5-turbo" if needed
-    //         messages,
-    //     },
-    //     {
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    //         },
-    //     }
-    // );
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'deepseek/deepseek-r1:free',
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
 
-    // const reply = response.data.choices[0].message.content;
-    // res.json({ reply });
-    // const response = client.responses.create({
-    //     model: "gpt-4o",
-    //     input: "Write a one-sentence bedtime story about a unicorn."
-    // });
-    const response = await client.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          { role: "user", content: "Write a one-sentence bedtime story about a unicorn." }
-        ]
-      });
-      
-    console.log(response.choices[0].message);
-    
-  } catch (error) {
-    console.error("Error from OpenAI API:", error);
-    res.status(500).json({ error: "Failed to generate chatbot response." });
+    const result = await response.json();
+    console.log("API response:", result);
+
+    if (result.error) {
+      console.log("Error in API response:", result.error);
+      res.status(500).json({ error: 'Failed to fetch recommendation' });
+      return;
+    }
+
+    const rawText = result?.choices?.[0]?.message?.content || 'Please try after sometime';
+    console.log("Raw text before beautifying:", rawText);
+
+    if (!rawText) {
+      console.log("Raw text is empty or undefined.");
+    } else {
+      const beautified = rawText
+  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Convert markdown bold to HTML <strong>
+  .replace(/###\s/g, '<h3>')                       // Convert markdown headers (###) to <h3>
+  .replace(/\n\n/g, '</h3><p>')                     // Double newline (two \n) => close h3, start new paragraph
+  .replace(/\n/g, '<br>')                           // Single newline => <br> for line breaks
+  .replace(/<\/h3><p><h3>/g, '</h3><p>')            // Remove unnecessary <h3><p> mix (if any)
+  .replace(/<\/h3><p><br>/g, '</p><br>');           // Clean up if any empty <p> tags exist.
+
+console.log("Beautified response:", beautified);
+     console.log("Beautified response:", beautified);
+      res.json({ reply: beautified });
+    }
+  } catch (err) {
+    console.error('Request failed:', err);
+    res.status(500).json({ error: 'Failed to fetch recommendation' });
   }
 });
 

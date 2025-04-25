@@ -19,12 +19,12 @@ function ChatbotModal({ onClose }) {
 
     try {
       const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
-      const response = await fetch(`${API_BASE_URL}/api/chatbot`, {
+      const response = await fetch(`${API_BASE_URL}/api/chatbot/respond`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ messages: newMessages })
+        body: JSON.stringify({ prompt: userInput })
       });
 
       const data = await response.json();
@@ -36,14 +36,14 @@ function ChatbotModal({ onClose }) {
       } else {
         setMessages(prev => [
           ...prev,
-          { role: "assistant", content: "Sorry, I couldn't generate a response." }
+          { role: "assistant", content: "Sorry, Please try after sometime." }
         ]);
       }
     } catch (error) {
       console.error("Chatbot error:", error);
       setMessages(prev => [
         ...prev,
-        { role: "assistant", content: "There was an error talking to the chatbot." }
+        { role: "assistant", content: "Sorry,Please try after sometime" }
       ]);
     } finally {
       setIsLoading(false);
@@ -65,7 +65,13 @@ function ChatbotModal({ onClose }) {
               msg.role === "user" ? "bg-green-100 text-right" : "bg-gray-100 text-left"
             }`}
           >
-            {msg.content}
+            <div
+  dangerouslySetInnerHTML={{ __html: msg.content }}
+  className={`p-2 my-1 rounded text-sm ${
+    msg.role === "user" ? "bg-green-100 text-right" : "bg-gray-100 text-left"
+  }`}
+/>
+
           </div>
         ))}
         {isLoading && <p className="text-gray-400 text-sm">Typing...</p>}

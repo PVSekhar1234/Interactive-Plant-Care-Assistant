@@ -5,6 +5,7 @@ import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import ReminderForm from "../components/ReminderForm";
 import HealthModal from "../components/HealthModal";
 import { updateDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 function PlantPage() {
   const { id } = useParams(); // Get plant ID from URL
   const [loadingRecommendation, setLoadingRecommendation] = useState(false);
@@ -18,10 +19,13 @@ function PlantPage() {
   const [healthInfo, setHealthInfo] = useState(null);
   const [healthUpdatedDate, setHealthUpdatedDate] = useState("dd/mm/yy");
   const [isHealthModalOpen, setIsHealthModalOpen] = useState(false);
+  const [showFertilizerForm, setShowFertilizerForm] = useState(false);
+  const [showOtherForm, setShowOtherForm] = useState(false);
+  const [isViewLogFormOpen, setIsViewLogFormOpen] = useState(false);
   useEffect(() => {
     const fetchPlantData = async () => {
       try {
-        const user = auth.currentUser;
+        const user = auth.currentUser; // Get the user ID from the current user
         if (!user) {
           setError("User not authenticated.");
           return;
@@ -45,6 +49,23 @@ function PlantPage() {
 
     fetchPlantData();
   }, [id]);
+
+
+const handleWateringLog = async () => {
+  const user = auth.currentUser;
+  if (!user) return alert("User not authenticated");
+
+  try {
+    const ref = collection(db, `users/${user.uid}/plants/${id}/watering`);
+    await addDoc(ref, {
+      timestamp: serverTimestamp(),
+    });
+    alert("Watering log added");
+  } catch (err) {
+    console.error("Failed to log watering:", err);
+    alert("Failed to add watering log");
+  }
+};
 
 
   const getWeather = async () => {
@@ -165,19 +186,13 @@ if (user && id) {
           <div>
             <div className="text-sm text-gray-700 space-y-2 max-h-60 overflow-y-auto pr-2 bg-green-100 p-2 rounded-md">
             {loadingRecommendation ? (
-  <p className="text-sm text-blue-500">Processing your request...</p>
+  <p className="text-sm text-green-500">Processing your request...</p>
 ) : (
   plant?.latestRecommendation ? (
-    <div className="text-sm text-gray-700 space-y-2">
-  {plant?.latestRecommendation
-    ?.split('\n')
-    .filter(line => line.trim() !== '')
-    .map((line, index) => (
-      <p key={index} className={line.trim().startsWith('-') ? 'pl-4 list-disc' : ''}>
-        {line}
-      </p>
-    ))}
-</div>
+    <div
+            className="text-sm text-gray-700 space-y-2"
+            dangerouslySetInnerHTML={{ __html: plant.latestRecommendation }}
+          />
 
   ) : (
     <p className="text-sm text-gray-500">Click the button to get recommendations</p>
@@ -222,6 +237,7 @@ if (user && id) {
                   </ul>
                 </div>
               )}
+              
             </div>
           ) : (
             "Health Monitoring Log (No data yet)"
@@ -241,8 +257,30 @@ if (user && id) {
           >
             Add Reminder
           </button>
+          {/* <div className="mt-4 space-y-4">
+  <h3 className="text-lg font-semibold mb-2">Activity Logging</h3>
+  <div className="flex gap-4">
+    <button onClick={handleWateringLog} className="px-3 py-1 bg-blue-500 text-white rounded">
+      Log Watering
+    </button>
+    <button onClick={() => setShowFertilizerForm(true)} className="px-3 py-1 bg-green-500 text-white rounded">
+      Log Fertilizer
+    </button>
+    <button onClick={() => setShowOtherForm(true)} className="px-3 py-1 bg-yellow-500 text-white rounded">
+      Log Other
+    </button>
+  </div>
+  <div>
+  <button onClick={() => setIsViewLogFormOpen(true)} className="px-3 py-1 bg-yellow-500 text-white rounded">
+      View Logs History 
+    </button>
+    </div>
+</div> */}
         </div>
       </div>
+
+   
+
 
       {isReminderFormOpen && (
         <ReminderForm
@@ -261,8 +299,67 @@ if (user && id) {
           }}
         />
       )}
+      {/* Care Logs Buttons */}
+{/* <div className="bg-yellow-100 p-4 rounded-lg space-y-2 -translate-y+[10px">
+  <h3 className="font-semibold">Add Care Log</h3>
+  <button
+    onClick={handleWateringLog}
+    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-purple-60 w-full"
+  >
+    Log Watering
+  </button>
+  <button
+    onClick={() => setShowFertilizerForm(true)}
+    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-green-100 w-full"
+  >
+    Log Fertilizer
+  </button>
+  <button
+    onClick={() => setShowOtherForm(true)}
+    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
+  >
+    Log Other Activity */}
+  {/* </button> */}
+
+  {/* <LogsDisplay plantId={id} /> */}
+  {/* {showFertilizerForm && (
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-96">
+    <FertilizerForm
+    isOpen={showFertilizerForm}
+    onClose={() => setShowFertilizerForm(false)}
+    plantId={id}
+  />
+    </div>
+  </div>
+)} */}
+  {/* {showOtherForm && (
+     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-96">
+  <OtherForm
+    isOpen={showOtherForm}
+    onClose={() => setShowOtherForm(false)}
+    plantId={id}
+  />
+    </div>
+  </div>
+)} */}
+{/* {isViewLogFormOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-100">
+  <ViewLogsForm
+    isOpen={isViewLogFormOpen}
+    onClose={() => setIsViewLogFormOpen(false)}
+    plantId={id}
+    />
+    </div>
+  </div>
+)} */}
+{/* </div> */}
+
 
     </div>
+    
   );
 }
 

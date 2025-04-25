@@ -1,61 +1,57 @@
-// const express = require('express');
-// const router = express.Router();
-// const { OpenAI } = require('openai');
-
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// router.post('/generate', async (req, res) => {
-//   const { prompt } = req.body;
-//   console.log("Received prompt:", prompt); // Log the received prompt
-//   try {
-//     const completion = await openai.chat.completions.create({
-//       model: "gpt-4o-mini", // or "gpt-4"
-//       messages: [
-//         { role: "system", content: "You are a helpful plant care assistant." },
-//         { role: "user", content: prompt },
-//       ],
-//       temperature: 0.7,
-//     });
-//     console.log("Prompt sent to GPT:", prompt); // Log the prompt sent to GP
-//      console.log("GPT response:", completion.choices[0].message.content); // Log the GPT response
-//     res.json({ reply: completion.choices[0].message.content });
-//   } catch (error) {
-//     console.error("Error from OpenAI:", error);
-//     res.status(500).json({ error: "Failed to generate GPT response" });
-//   }
-// });
-
-// module.exports = router;
- const express = require('express');
-const fetch =require('node-fetch');
+const express = require('express');
+const fetch = require('node-fetch');
 const router = express.Router();
 
 router.post('/generate', async (req, res) => {
   const { prompt } = req.body;
-    console.log("Received prompt:", prompt); // Log the received prompt
+  console.log("Received prompt:", prompt);
+
   try {
-    const response = await fetch(
-      'https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.HG_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ inputs: prompt }),
-      }
-    );
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'deepseek/deepseek-r1:free',
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
 
     const result = await response.json();
-    console.log("Hugging Face API response:", result); // Log the API response
-    const generatedText = result?.[0]?.generated_text || 'No response';
-const reply = generatedText.replace(prompt, '').trim();
-    res.json({ reply });
+    console.log("API response:", result);
+
+    if (result.error) {
+      console.log("Error in API response:", result.error);
+      res.status(500).json({ error: 'Failed to fetch recommendation' });
+      return;
+    }
+
+    const rawText = result?.choices?.[0]?.message?.content || 'Please try after sometime';
+    console.log("Raw text before beautifying:", rawText);
+
+    if (!rawText) {
+      console.log("Raw text is empty or undefined.");
+    } else {
+      const beautified = rawText
+  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Convert markdown bold to HTML <strong>
+  .replace(/###\s/g, '<h3>')                       // Convert markdown headers (###) to <h3>
+  .replace(/\n\n/g, '</h3><p>')                     // Double newline (two \n) => close h3, start new paragraph
+  .replace(/\n/g, '<br>')                           // Single newline => <br> for line breaks
+  .replace(/<\/h3><p><h3>/g, '</h3><p>')            // Remove unnecessary <h3><p> mix (if any)
+  .replace(/<\/h3><p><br>/g, '</p><br>');           // Clean up if any empty <p> tags exist.
+
+console.log("Beautified response:", beautified);
+                          // Single newline => <br> for line breaks
+
+      console.log("Beautified response:", beautified);
+      res.json({ reply: beautified });
+    }
   } catch (err) {
-    console.error('Hugging Face API error:', err);
+    console.error('Request failed:', err);
     res.status(500).json({ error: 'Failed to fetch recommendation' });
   }
 });
- module.exports = router;
+
+module.exports = router;

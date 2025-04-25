@@ -10,11 +10,13 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import ProtectedRoute from './pages/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage';
+import { useLocation } from 'react-router-dom';
 function App() {
+  const location = useLocation();
+  const hideLayout = location.pathname === '/';
   return (
-   
       <div className="min-h-screen bg-gray-50">
-        <Navbar/>
+         {!hideLayout && <Navbar />}
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
@@ -26,7 +28,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
-        <ChatbotButton/>
+        {!hideLayout && <ChatbotButton />}
       </div>
   
   );
